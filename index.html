@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        * {
+            font-family: "Verdana";
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: center;
+            background-image: url("bg.jpg");
+            background-size: cover;
+        }
+
+        .content {
+            padding: 20px;
+            background: rgba(255,255,255, 0.8);
+            display: flex;
+            flex-direction: column;
+            max-width: 750px;
+            margin: 0 auto;
+            align-items: center;
+            gap: 20px;
+            border: 2px solid;
+            border-radius: 20px;
+        }
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type=text], input[type=email], span {
+            font-size: 40px;
+        }
+        input#crs {
+            width: 200px;
+        }
+        input#email {
+            width: 600px;
+        }
+        button {
+            appearance: none;
+            font-size: 40px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: none;
+            border: 2px solid;
+        }
+        button:hover {
+            box-shadow: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>CUHWC Mailing List Signup</h1>
+        <p>To sign up for CUHWC's mailing list, enter your {{ if . }}email{{ else }}CRSid{{end}}</p>
+        <form id="form" method="post" action="/post">
+            {{ if . }}
+            <input id="email" name="email" type="email" placeholder="someotheremail@gmail.com">
+            <a href="/">Click here if you have a Cambridge email</a>
+            {{ else }}
+            <span>
+                <input id="crs" name="crsid" type="text" placeholder="aaa11" autofocus><span>@cam.ac.uk</span>
+            </span>
+            <a href="/email">Click here if you have a non-Cambridge email</a>
+            {{ end }}
+            <button type="submit">Sign up!</button>
+        </form>
+    </div>
+    <script>
+        var form = document.getElementById("form");
+
+        document.addEventListener("keydown", function(evt) {
+            evt = evt || window.event;
+            if (evt.keyCode == 27) {
+                form.reset();
+            }
+            if (evt.keyCode == 13) {
+                form.submit();
+            }
+        });
+
+    </script>
+</body>
+</html>
