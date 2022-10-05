@@ -1,0 +1,41 @@
+name: main
+
+on:
+  push:
+    tags: [ "*" ]
+
+permissions:
+  contents: write
+
+jobs:
+  createrelease:
+    name: Create release
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+  build:
+    name: Build binaries
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: 
+    - createrelease
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: [amd64, arm64]
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: wangyoucao577/go-release-action@v1.32
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
+        release_tag: ${{ github.ref_name }}
+        overwrite: true
