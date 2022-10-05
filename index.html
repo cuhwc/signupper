@@ -64,11 +64,11 @@
         <p>To sign up for CUHWC's mailing list, enter your {{ if . }}email{{ else }}CRSid{{end}}</p>
         <form id="form" method="post" action="/post">
             {{ if . }}
-            <input id="email" name="email" type="email" placeholder="someotheremail@gmail.com">
+            <input id="email" name="email" type="email" autocomplete="off" placeholder="someotheremail@gmail.com">
             <a href="/">Click here if you have a Cambridge email</a>
             {{ else }}
             <span>
-                <input id="crs" name="crsid" type="text" placeholder="aaa11" autofocus><span>@cam.ac.uk</span>
+                <input id="crs" name="crsid" type="text" autocomplete="off" placeholder="aaa11" autofocus><span>@cam.ac.uk</span>
             </span>
             <a href="/email">Click here if you have a non-Cambridge email</a>
             {{ end }}
