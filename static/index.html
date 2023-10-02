@@ -61,6 +61,16 @@
         button:hover {
             box-shadow: 5px;
         }
+
+        .admin {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+        }
+        .admin button {
+            padding: 2px;
+            font-size: 8px;
+        }
     </style>
 </head>
 <body>
@@ -83,6 +93,9 @@
             <button type="submit">Sign up!</button>
         </form>
     </div>
+    <div class="admin">
+        <button onclick="download()">Download</button>
+    </div>
     <script>
         const other = document.getElementById("otheremail");
         const cam = document.getElementById("camemail");
@@ -100,6 +113,7 @@
             other.style.display = "none";
             cam.style.display = "block";
             camInput.focus();
+            form.reset();
         }
         
         function toother(e) {
@@ -107,19 +121,57 @@
             cam.style.display = "none";
             other.style.display = "block";
             otherInput.focus();
+            form.reset();
+        }
+
+        function getEmails() {
+            return JSON.parse(localStorage.getItem("emails") ?? "[]");
         }
 
         function addEmail(e) {
-            const current = JSON.parse(localStorage.getItem("emails") ?? "[]");
-            current.push({"email": e, "dt": new Date()});
-            localStorage.setItem("emails", JSON.stringify(current));
-            console.info(`${current.length+1} emails in storage`)
+            if (e == "") {
+                return;
+            }
+            console.debug("adding email "+ e);
+            var emails = getEmails();
+            emails.push({"email": e, "dt": new Date()});
+            localStorage.setItem("emails", JSON.stringify(emails));
+            console.info(`${emails.length} emails in storage`)
+        }
+
+        function download() {
+            const emails = getEmails();
+            if (emails.length == 0) {
+                alert("No signups to download!");
+                return;
+            }
+            const fname = `cuhwc_signups_${emails[0].dt}_count_${emails.length}.csv`;
+            const file = new File([JSON.stringify(emails)], fname, {
+                type: "application/json",
+            });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(file);
+            link.href = url
+            link.download = file.name;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(link);
+            deleteSignups();
+        }
+
+        function deleteSignups() {
+            const num = getEmails().length;
+            if (window.confirm(`This will clear ${num} signups. Please make sure the download worked first!`)) {
+                localStorage.clear();
+            }
         }
         var form = document.getElementById("form");
 
         document.addEventListener("keydown", function(evt) {
             evt = evt || window.event;
             if (evt.keyCode == 27) {
+                // ESC
                 form.reset();
             }
             if (evt.keyCode == 13) {
@@ -133,10 +185,12 @@
         });
 
         function submit() {
-            addEmail(otherInput.value != "" ? otherInput.value : (camInput.value + "@cam.ac.uk"));
-            document.querySelectorAll("input").forEach((e) => {
-                e.value = "";
-            });
+            if (otherInput.value.trim() != "") {
+                addEmail(otherInput.value.trim());
+            } else if(camInput.value.trim() != "") {
+                addEmail(camInput.value.trim() + "@cam.ac.uk");
+            }
+            form.reset();
         }
 
     </script>
