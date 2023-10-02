@@ -1,5 +1,5 @@
 {
-  description = "Another cool golang abhorration from samw";
+  description = "CUHWC Signup Tool";
 
   inputs.utils.url = "github:numtide/flake-utils";
   inputs.devshell = {
@@ -16,24 +16,11 @@
     utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [devshell.overlay];
+        overlays = [devshell.overlays.default];
       };
-    in rec {
-      packages.default = pkgs.buildGoModule {
-        name = "my-project";
-        src = self;
-        vendorSha256 = "";
-
-        # Inject the git version if you want
-        #ldflags = ''
-        #  -X main.version=${if self ? rev then self.rev else "dirty"}
-        #'';
-      };
-
-      apps.default = utils.lib.mkApp {drv = packages.default;};
-
+    in {
       devShells.default =
-        pkgs.devshell.mkShell {packages = with pkgs; [go gopls];};
+        pkgs.devshell.mkShell {};
       formatter = pkgs.alejandra;
     });
 }

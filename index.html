@@ -29,6 +29,11 @@
             border: 2px solid;
             border-radius: 20px;
         }
+        .counter {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+        }
         form {
             width: 100%;
             display: flex;
@@ -61,21 +66,55 @@
 <body>
     <div class="content">
         <h1>CUHWC Mailing List Signup</h1>
-        <p>To sign up for CUHWC's mailing list, enter your {{ if . }}email{{ else }}CRSid{{end}}</p>
+        <p>To sign up for CUHWC's mailing list, enter your CRSid or other email</p>
         <form id="form" method="post" action="/post">
-            {{ if . }}
-            <input id="email" name="email" type="email" autocomplete="off" placeholder="someotheremail@gmail.com">
-            <a href="/">Click here if you have a Cambridge email</a>
-            {{ else }}
-            <span>
-                <input id="crs" name="crsid" type="text" autocomplete="off" placeholder="aaa11" autofocus><span>@cam.ac.uk</span>
-            </span>
-            <a href="/email">Click here if you have a non-Cambridge email</a>
-            {{ end }}
+            <div id="otheremail">
+                <div>
+                    <input id="email" name="email" type="email" autocomplete="off" placeholder="someotheremail@gmail.com">
+                </div>
+                <a href="/" id="camlink">Click here if you have a Cambridge email</a>
+            </div>
+            <div id="camemail">
+                <div>
+                    <input id="crs" name="crsid" type="text" autocomplete="off" placeholder="aaa11" autofocus><span>@cam.ac.uk</span>
+                </div>
+                <a href="/email" id="otherlink">Click here if you have a non-Cambridge email</a>
+            </div>
             <button type="submit">Sign up!</button>
         </form>
     </div>
     <script>
+        const other = document.getElementById("otheremail");
+        const cam = document.getElementById("camemail");
+
+        const otherInput = document.getElementById("email");
+        const camInput = document.getElementById("crs");
+
+        other.style.display = "none";
+
+        document.getElementById("otherlink").addEventListener("click", toother);
+        document.getElementById("camlink").addEventListener("click", tocam);
+
+        function tocam(e) {
+            e.preventDefault();
+            other.style.display = "none";
+            cam.style.display = "block";
+            camInput.focus();
+        }
+        
+        function toother(e) {
+            e.preventDefault();
+            cam.style.display = "none";
+            other.style.display = "block";
+            otherInput.focus();
+        }
+
+        function addEmail(e) {
+            const current = JSON.parse(localStorage.getItem("emails") ?? "[]");
+            current.push({"email": e, "dt": new Date()});
+            localStorage.setItem("emails", JSON.stringify(current));
+            console.info(`${current.length+1} emails in storage`)
+        }
         var form = document.getElementById("form");
 
         document.addEventListener("keydown", function(evt) {
@@ -84,9 +123,21 @@
                 form.reset();
             }
             if (evt.keyCode == 13) {
-                form.submit();
+                submit();
             }
         });
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            submit();
+        });
+
+        function submit() {
+            addEmail(otherInput.value != "" ? otherInput.value : (camInput.value + "@cam.ac.uk"));
+            document.querySelectorAll("input").forEach((e) => {
+                e.value = "";
+            });
+        }
 
     </script>
 </body>
