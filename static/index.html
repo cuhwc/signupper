@@ -170,12 +170,14 @@
 
         document.addEventListener("keydown", function(evt) {
             evt = evt || window.event;
-            if (evt.keyCode == 27) {
-                // ESC
+            if (evt.keyCode == 27) { // ESC
                 form.reset();
             }
-            if (evt.keyCode == 13) {
-                submit();
+            if (evt.keyCode == 13) { // Enter
+                // Prevent an enter keypress while the form field is focussed from
+                // triggering submit, else we'd do it twice;
+                evt.preventDefault();
+                form.requestSubmit();
             }
         });
 
