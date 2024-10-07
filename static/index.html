@@ -17,6 +17,10 @@
             background-size: cover;
         }
 
+        p {
+            margin: 10px;
+        }
+
         .content {
             padding: 20px;
             background: rgba(255,255,255, 0.8);
@@ -50,16 +54,20 @@
         input#email {
             width: 600px;
         }
-        button {
+        button, a.button {
             appearance: none;
             font-size: 40px;
             padding: 10px;
             border-radius: 10px;
             box-shadow: none;
             border: 2px solid;
+            background: #ccc;
         }
-        button:hover {
+        button:hover, a.button:hover {
             box-shadow: 5px;
+        }
+        a.button {
+            color: inherit;
         }
 
         .admin {
@@ -67,33 +75,48 @@
             bottom: 0px;
             right: 0px;
         }
-        .admin button {
+        .admin button, .admin .button {
             padding: 2px;
             font-size: 8px;
         }
+
+        #confirmation {
+            font-size: 32px;
+        }
+
     </style>
 </head>
 <body>
     <div class="content">
         <h1>CUHWC Mailing List Signup</h1>
-        <p>To sign up for CUHWC's mailing list, enter your CRSid or other email</p>
-        <form id="form" method="post" action="/post">
-            <div id="otheremail">
-                <div>
-                    <input id="email" name="email" type="email" autocomplete="off" placeholder="someotheremail@gmail.com">
+        <div id="signup">
+            <p>To sign up for CUHWC's mailing list, enter your CRSid or other email</p>
+            <form id="form" method="post" action="/post">
+                <div id="otheremail">
+                    <div>
+                        <input id="email" name="email" type="email" autocomplete="off" placeholder="someotheremail@gmail.com">
+                    </div>
+                    <p>
+                        <a href="/" id="camlink">Click here if you have a Cambridge email</a>
+                    </p>
                 </div>
-                <a href="/" id="camlink">Click here if you have a Cambridge email</a>
-            </div>
-            <div id="camemail">
-                <div>
-                    <input id="crs" name="crsid" type="text" autocomplete="off" placeholder="aaa11" autofocus><span>@cam.ac.uk</span>
+                <div id="camemail">
+                    <div>
+                        <input id="crs" name="crsid" type="text" autocomplete="off" placeholder="aaa11" autofocus><span>@cam.ac.uk</span>
+                    </div>
+                    <p>
+                        <a href="/email" id="otherlink">Click here if you have a non-Cambridge email</a>
+                    </p>
                 </div>
-                <a href="/email" id="otherlink">Click here if you have a non-Cambridge email</a>
-            </div>
-            <button type="submit">Sign up!</button>
-        </form>
+                <button type="submit">Sign up!</button>
+            </form>
+        </div>
+        <div id="confirmation">
+            ✅ Thanks for signing up!
+        </div>
     </div>
     <div class="admin">
+        <a class="button" href="https://github.com/cuhwc/signupper">About</a>
         <button onclick="download()">Download</button>
     </div>
     <script>
@@ -104,6 +127,10 @@
         const camInput = document.getElementById("crs");
 
         other.style.display = "none";
+
+        const signup = document.getElementById("signup");
+        const confirmation = document.getElementById("confirmation");
+        confirmation.style.display = "none";
 
         document.getElementById("otherlink").addEventListener("click", toother);
         document.getElementById("camlink").addEventListener("click", tocam);
@@ -186,6 +213,16 @@
             submit();
         });
 
+        function flashConfirmation() {
+            signup.style.display = "none";
+            confirmation.style.display = "block";
+            setTimeout(() => {
+                signup.style.display = "block";
+                confirmation.style.display = "none";
+            }, 2000);
+        }
+
+
         function submit() {
             if (otherInput.value.trim() != "") {
                 addEmail(otherInput.value.trim());
@@ -193,6 +230,7 @@
                 addEmail(camInput.value.trim() + "@cam.ac.uk");
             }
             form.reset();
+            flashConfirmation();
         }
 
     </script>
