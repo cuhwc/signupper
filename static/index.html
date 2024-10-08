@@ -127,6 +127,7 @@
         const camInput = document.getElementById("crs");
 
         other.style.display = "none";
+        cam.style.display = "block";
 
         const signup = document.getElementById("signup");
         const confirmation = document.getElementById("confirmation");
@@ -134,6 +135,20 @@
 
         document.getElementById("otherlink").addEventListener("click", toother);
         document.getElementById("camlink").addEventListener("click", tocam);
+
+        function autofocus() {
+            // Automatically re-focus the input after a delay
+            if (cam.style.display == "block") {
+                camInput.focus();
+            } else {
+                otherInput.focus();
+            }
+        }
+
+        document.addEventListener("click", () => {
+            setTimeout(autofocus, 5000);
+        });
+    
 
         function tocam(e) {
             e.preventDefault();
