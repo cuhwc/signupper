@@ -54,6 +54,9 @@
         input#email {
             width: 600px;
         }
+        input#crs:focus, input#email:focus {
+            outline: 3px solid blue;
+        }
         button, a.button {
             appearance: none;
             font-size: 40px;
@@ -64,7 +67,10 @@
             background: #ccc;
         }
         button:hover, a.button:hover {
-            box-shadow: 5px;
+            background: #aaa;
+        }
+        button:active, a.button:active{
+            background: #999;
         }
         a.button {
             color: inherit;
